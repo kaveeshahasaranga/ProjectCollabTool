@@ -1,0 +1,6 @@
+@ProjectCollabTool_HostAddress = http://localhost:5097
+
+GET {{ProjectCollabTool_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
