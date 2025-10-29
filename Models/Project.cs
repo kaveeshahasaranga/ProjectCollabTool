@@ -1,58 +1,19 @@
-using Microsoft.EntityFrameworkCore;
-using ProjectCollabTool.Data;
-using ProjectCollabTool.Models;
+using System.Collections.Generic;
+using System;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// --- CORS Policy එක හදන තැන ---
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-builder.Services.AddCors(options =>
+// Project class එකත් අදාළ namespace එක ඇතුළට දාමු
+namespace ProjectCollabTool.Models
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy  =>
-                      {
-                          policy.AllowAnyOrigin() // ඕනම තැනකින් එන request භාරගන්න
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                      });
-});
-// --- CORS එක ඉවරයි ---
+    public class Project
+    {
+        public int Id { get; set; } // Primary Key
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
-
-// 1. Add services to the container.
-builder.Services.AddControllers(); 
-
-// 2. Add our DbContext
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// 3. Add Swagger services (for the test page)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// 4. Configure the HTTP request pipeline (how requests are handled)
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(); 
-}
-
-// 5. Use HTTPS Redirection ( අපි මේක දැනට comment out කරනවා )
-// app.UseHttpsRedirection(); 
-
-// --- App එකට CORS පාවිච්චි කරන්න කියන තැන ---
-app.UseCors(MyAllowSpecificOrigins);
-// --- ---
-
-// 6. Use Authorization (we'll use this later for logins)
-app.UseAuthorization();
-
-// 7. Tell the app to use the routes from our Controllers
-app.MapControllers();
-
-// 8. Run the application
-app.Run();
+        // එක project එකකට task ගොඩක් තියෙන්න පුළුවන්
+        // (one-to-many relationship)
+        public List<TaskItem> Tasks { get; set; } = new List<TaskItem>();
+    }
+} 
 
