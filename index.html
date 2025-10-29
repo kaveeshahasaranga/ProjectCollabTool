@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Collab Tool</title>
+    <!-- Tailwind CSS CDN එක load කරනවා -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Inter font එක load කරනවා */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-8 max-w-4xl">
+        <h1 class="text-4xl font-bold text-indigo-600 mb-8">Project Collaboration Tool</h1>
+
+        <!-- Projects දාන්න තැන -->
+        <div class="mb-12">
+            <h2 class="text-2xl font-semibold mb-4">Projects</h2>
+            <div id="projects-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Projects ටික මෙතන load වෙයි -->
+                <p class="text-gray-500">Loading projects...</p>
+            </div>
+        </div>
+
+        <!-- Tasks දාන්න තැන -->
+        <div>
+            <h2 class="text-2xl font-semibold mb-4">All Tasks</h2>
+            <div id="tasks-list" class="space-y-4">
+                <!-- Tasks ටික මෙතන load වෙයි -->
+                <p class="text-gray-500">Loading tasks...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API එකේ URL එක (ඔයාගෙ port එක වෙනස් නම්, මෙතන වෙනස් කරන්න)
+        const API_BASE_URL = "http://localhost:5097";
+
+        // Website එක load උන ගමන් මේ function එක run වෙනවා
+        window.onload = function() {
+            loadProjects();
+            loadTasks();
+        };
+
+        // 1. Projects ටික API එකෙන් fetch කරලා ගේනවා
+        async function loadProjects() {
+            const projectsList = document.getElementById('projects-list');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/Projects`);
+                const projects = await response.json();
+
+                projectsList.innerHTML = ''; // "Loading..." text එක අයින් කරනවා
+
+                if (projects.length === 0) {
+                    projectsList.innerHTML = '<p class="text-gray-500">No projects found.</p>';
+                    return;
+                }
+
+                projects.forEach(project => {
+                    const projectCard = `
+                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                            <h3 class="text-xl font-semibold text-indigo-700">${project.name}</h3>
+                            <p class="text-gray-600 mt-2">${project.description}</p>
+                            <p class="text-sm text-gray-400 mt-4">Tasks: ${project.tasks.length}</p>
+                        </div>
+                    `;
+                    projectsList.innerHTML += projectCard;
+                });
+
+            } catch (error) {
+                console.error('Error loading projects:', error);
+                projectsList.innerHTML = '<p class="text-red-500">Could not load projects. (Is the API running?)</p>';
+            }
+        }
+
+        // 2. Tasks ටික API එකෙන් fetch කරලා ගේනවා
+        async function loadTasks() {
+            const tasksList = document.getElementById('tasks-list');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/TaskItems`);
+                const tasks = await response.json();
+
+                tasksList.innerHTML = ''; // "Loading..." text එක අයින් කරනවා
+
+                if (tasks.length === 0) {
+                    tasksList.innerHTML = '<p class="text-gray-500">No tasks found. Try creating one via Swagger.</p>';
+                    return;
+                }
+
+                tasks.forEach(task => {
+                    const taskCard = `
+                        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex justify-between items-center">
+                            <div>
+                                <h3 class="text-lg font-medium">${task.title}</h3>
+                                <p class="text-sm text-gray-500">Project ID: ${task.projectId}</p>
+                            </div>
+                            <span class="text-sm font-semibold ${task.isCompleted ? 'text-green-600' : 'text-yellow-600'}">
+                                ${task.isCompleted ? 'Completed' : 'Pending'}
+                            </span>
+                        </div>
+                    `;
+                    tasksList.innerHTML += taskCard;
+                });
+
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+                tasksList.innerHTML = '<p class="text-red-500">Could not load tasks. (Is the API running?)</p>';
+            }
+        }
+    </script>
+
+</body>
+</html>

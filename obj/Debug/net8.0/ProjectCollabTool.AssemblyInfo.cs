@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProjectCollabTool")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3fc7167ffdd2799bd6185ee468e3d777e12ca0be")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae71b15c98694673817cffd84fc514a7eb1f0575")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProjectCollabTool")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProjectCollabTool")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
