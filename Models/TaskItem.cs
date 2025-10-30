@@ -1,21 +1,20 @@
-    using System;
-    
-    // මේකත් අදාළ namespace එක ඇතුළට දාමු
-    namespace ProjectCollabTool.Models
+using System;
+using System.Text.Json.Serialization; // <-- [JsonIgnore] එකට මේක ඕන
+
+namespace ProjectCollabTool.Models
+{
+    public class TaskItem
     {
-        public class TaskItem
-        {
-            public int Id { get; set; } // Primary Key
-            public string Title { get; set; }
-            public bool IsCompleted { get; set; } = false;
-            
-            public int ProjectId { get; set; } // Foreign Key
-            
-            // වෙනස මෙතන:
-            // Project කියන තැනට ? ලකුණක් දාලා,
-            // API එකට කියනවා මේක null (හිස්) වෙන්න පුළුවන් කියලා.
-            public Project? Project { get; set; } 
-        }
+        public int Id { get; set; } 
+        public string? Title { get; set; } // <-- '?' එක තියෙන්න ඕන
+        public bool IsCompleted { get; set; } = false;
+        
+        public int ProjectId { get; set; } 
+        
+        // [JsonIgnore] එක තියෙනවද කියලා බලන්න.
+        // මේක තමා cycle error එක නවත්වන්නෙ.
+        [JsonIgnore] 
+        public Project? Project { get; set; } // <-- '?' එක තියෙන්න ඕන
     }
-    
+}
 

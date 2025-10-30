@@ -1,37 +1,49 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectCollabTool.Data;
 using ProjectCollabTool.Models;
+// අලුතෙන් add කරන line එක
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Add services to the container.
-builder.Services.AddControllers(); // This line adds services for controllers.
+// === 1. CORS Policy එක ===
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin() // ඕනම තැනකින් (file:/// ඇතුළුව)
+              .AllowAnyMethod() // ඕනම method එකක් (GET, POST)
+              .AllowAnyHeader(); // ඕනම header එකක්
+    });
+});
+// ==========================
 
-// 2. Add our DbContext
+// 2. Add services to the container.
+// --- මෙන්න වෙනස ---
+// "AddControllers()" වෙනුවට, cycle handle කරන්න options එක්ක add කරමු
+builder.Services.AddControllers();
+// --- වෙනස ඉවරයි ---
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// 3. Add Swagger services (for the test page)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// 4. Configure the HTTP request pipeline (how requests are handled)
+// 3. Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(); // This line serves the /swagger page
+    app.UseSwaggerUI();
 }
 
-// 5. Use HTTPS Redirection ( අපි මේක දැනට comment out කරනවා )
-// app.UseHttpsRedirection(); 
+// === 4. "AllowAll" Policy එක පාවිච්චි කරන්න කියලා App එකට කියනවා ===
+app.UseCors("AllowAll");
+// ========================================================
 
-// 6. Use Authorization (we'll use this later for logins)
+// app.UseHttpsRedirection(); // මේක comment කරලම තියමු
 app.UseAuthorization();
-
-// 7. Tell the app to use the routes from our Controllers
 app.MapControllers();
-
-// 8. Run the application
 app.Run();
+
